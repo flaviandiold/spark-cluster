@@ -2,7 +2,9 @@
 
 1. cd spark-cluster
 2. docker compose up --build -d
-3. Run any of the below shown commands in your terminal
+3. cd ../java
+4. mvn clean package
+5. Run any of the below shown commands in your terminal
 
 # Filter Functionality in Spark
 
