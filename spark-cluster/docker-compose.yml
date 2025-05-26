@@ -1,0 +1,60 @@
+version: "3"
+
+services:
+  spark-master:
+    build: ./
+    container_name: spark-master
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_NO_DAEMONIZE=true
+      - NODE_ID=MASTER
+    ports:
+      - "7077:7077"     # Spark master port
+      - "8080:8080"     # Web UI
+    volumes:
+      - ../dataset:/app/dataset
+      - ../java/target:/app/target
+    networks:
+      - spark-net
+
+  spark-worker-1:
+    build: ./
+    container_name: spark-worker-1
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_NO_DAEMONIZE=true
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=2g
+      - NODE_ID=WORKER_1
+    depends_on:
+      - spark-master
+    ports:
+      - "8081:8081"     # Worker UI
+    volumes:
+      - ../dataset:/app/dataset
+    networks:
+      - spark-net
+
+  spark-worker-2:
+    build: ./
+    container_name: spark-worker-2
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_NO_DAEMONIZE=true
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=2g
+      - NODE_ID=WORKER_2
+    depends_on:
+      - spark-master
+    ports:
+      - "8082:8081"     # Worker UI
+    volumes:
+      - ../dataset:/app/dataset
+    networks:
+      - spark-net
+
+networks:
+  spark-net:
